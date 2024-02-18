@@ -1,0 +1,189 @@
+@font-face {
+  font-family: "aAttackGraffiti";
+  src: url("aAttackGraffiti.ttf");
+}
+@font-face {
+  font-family: "adrip1";
+  src: url("adrip1.ttf");
+}
+@font-face {
+  font-family: "docallismeonstreet";
+  src: url("docallismeonstreet.otf");
+}
+@font-face {
+  font-family: "punkkid";
+  src: url("punkkid.ttf");
+}
+@font-face {
+  font-family: "StreetWars";
+  src: url("StreetWars.ttf");
+}
+@font-face {
+  font-family: "TheBattleCont";
+  src: url("TheBattleCont.ttf");
+}
+@font-face {
+  font-family: "throwupz";
+  src: url("throwupz.ttf");
+}
+@font-face {
+  font-family: "monaco";
+  src: url("Monaco.ttf");
+}
+
+/* 
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.container {
+  text-align: center;
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+canvas {
+  border: 1px solid #000;
+  cursor: pointer;
+}
+   */
+
+/* Basic Reset */
+
+:root {
+  --bg-color: #FAF9F6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'monaco', Arial, sans-serif;
+  background-color: var(--bg-color);
+}
+
+#canvasContainer {
+  box-shadow: 0 0 1em 0 rgba(0,0,0,0.5);
+}
+
+#helpMessage {
+  margin: 5px;
+}
+
+#form-container {
+  margin: 20px auto;
+}
+
+#form {
+  width: 300px;
+  margin: 0 auto;
+  background-color: var(--bg-color);
+  border-radius: 10px;
+  margin-top: 25px;
+  padding: 0 10px 0 10px;
+  box-shadow: 0 0 1em 0 rgba(0,0,0,0.3);
+}
+
+#fontSelector {
+  width: 100%;
+}
+
+#saveButton {
+  width: 100%;
+  margin-block: 20px;
+  padding: 10px;
+  background-color: #EA322E;
+  color: var(--bg-color);
+  cursor: pointer;
+  height: 40px;
+}
+
+#saveButton:hover {
+  background-color: #941100;
+}
+
+#zoom {
+  visibility: hidden;
+  display: none;
+}
+
+#zoomButtons {
+  text-align: right;
+  z-index: 9999;
+}
+
+#zoomButtons button {
+  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  color: #000;
+}
+
+#profileLink {
+  text-align: right;
+  float: right;
+  margin-bottom: 10px;
+}
+
+.feature {
+  padding-block: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+canvas {
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+select, input[type="color"], input[type="text"], button {
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: 'monaco', Arial, sans-serif;
+  background-color: #fff;
+}
+
+input[type="text"] {
+  height: 40px;
+  padding: 5px;
+}
+
+input[type="color"] {
+  height: 40px;
+}
+
+select {
+  padding: 10px;
+  height: 40px;
+}
+
+input {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 98%;
+    margin: auto;
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }  
+
+  /* #zoom {
+    visibility:visible;
+    display:flex;
+  } */
+}
