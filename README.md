@@ -1,6 +1,5 @@
 <h1>Graffiti Me</h1>
 
-<!-- Add my twitter.m4v video from the repo root -->
-<video controls>
-    <source src="/twitter.m4v" type="video/m4v">
-</video>
+<p>Graffiti MY Twitter banner with custom text :)</p>
+<!-- Add my banner.jpg from /static/graffit -->
+<img src="/static/graffiti/banner.jpg" alt="Graffiti banner" style="width: 100%;">
