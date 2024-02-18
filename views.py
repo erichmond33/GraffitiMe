@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 import os
@@ -48,10 +49,11 @@ def save_image(request):
 
                 # Update my twitter banner
                 # Your Twitter API credentials
-                consumer_key = 'UfehC4dEmEVOcan9ic85xJGp1'
-                consumer_secret = 'VGyJaOboaNdSvGK3Jcef7X3CJ4S6Jo8111jylS0sxMoYGNoURh'
-                access_token = '1206002867917774848-HvptijLOkHdfVZbRsKSDOQhlOrzhEa'
-                access_token_secret = 'GUhlXTjuWr7XbkTYIohuYjjcoqMNf0t82WhACBol2BVtn'
+                load_dotenv()
+                consumer_key = os.getenv('TWITTER_CONSUMER_KEY')
+                consumer_secret = os.getenv('TWITTER_CONSUMER_SECRET')
+                access_token = os.getenv('TWITTER_ACCESS_TOKEN')
+                access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
 
                 # Authenticate with the Twitter API
                 auth = tweepy.OAuth1UserHandler(
