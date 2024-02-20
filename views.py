@@ -50,10 +50,10 @@ def save_image(request):
                 # Update my twitter banner
                 # Your Twitter API credentials
                 load_dotenv()
-                consumer_key = os.getenv('TWITTER_CONSUMER_KEY')
-                consumer_secret = os.getenv('TWITTER_CONSUMER_SECRET')
-                access_token = os.getenv('TWITTER_ACCESS_TOKEN')
-                access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
+                consumer_key = os.getenv('CONSUMER_KEY')
+                consumer_secret = os.getenv('CONSUMER_SECRET')
+                access_token = os.getenv('ACCESS_TOKEN')
+                access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
 
                 # Authenticate with the Twitter API
                 auth = tweepy.OAuth1UserHandler(
