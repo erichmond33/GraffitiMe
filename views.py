@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 import os
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -8,6 +8,8 @@ import json
 from django.core.files.base import ContentFile
 import base64
 import tweepy
+from allauth.socialaccount.models import SocialApp, SocialAccount 
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     if request.method == "GET":
@@ -15,7 +17,37 @@ def index(request):
     
 def temp(request):
     if request.method == "GET":
+
+        # try:
+        #     social_app = SocialApp.objects.get(provider='twitter')
+        #     print('Found Twitter SocialApp with ID:', social_app.id)
+        #     print('SITE_ID:', social_app.sites.all()[0].id)
+        # except SocialApp.DoesNotExist:
+        #     print('Twitter SocialApp not found!')
+
         return render(request, "graffiti/temp.html")
+    
+@login_required
+def profile_view(request):
+    # Get associated Twitter account
+    # try:
+    social_account = SocialAccount.objects.get(user=request.user, provider='twitter')
+    twitter_data = social_account.extra_data  # Access Twitter data
+    
+    # except SocialAccount.DoesNotExist:
+    #     # Handle if no Twitter account is linked
+    #     return redirect('temp') 
+
+    # Example of accessing Twitter data (replace with what you need)
+    username = twitter_data.get('screen_name')
+    name = twitter_data.get('name')
+
+    context = {
+        'username': username, 
+        'name': name,
+        # Add more Twitter data as needed
+    }
+    return render(request, 'graffiti/profile.html', context)
     
 @csrf_exempt
 def save_image(request):
@@ -50,10 +82,10 @@ def save_image(request):
                 # Update my twitter banner
                 # Your Twitter API credentials
                 load_dotenv()
-                consumer_key = os.getenv('TWITTER_CONSUMER_KEY')
-                consumer_secret = os.getenv('TWITTER_CONSUMER_SECRET')
-                access_token = os.getenv('TWITTER_ACCESS_TOKEN')
-                access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
+                consumer_key = os.getenv('CONSUMER_KEY')
+                consumer_secret = os.getenv('CONSUMER_SECRET')
+                access_token = os.getenv('ACCESS_TOKEN')
+                access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
 
                 # Authenticate with the Twitter API
                 auth = tweepy.OAuth1UserHandler(

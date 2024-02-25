@@ -239,7 +239,7 @@ function loadImageWithHardReload(url, callback) {
   });
   
   var initialFontSize = window.innerWidth < 600 ? 20 : 40;
-  var text = new fabric.IText('x username', {
+  var text = new fabric.IText('leave a note', {
     left: 50,
     top: 30,
     fontFamily: 'Trebuchet MS',

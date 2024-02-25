@@ -1,16 +1,21 @@
-{% load static %}
+{% load socialaccount %} 
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drag Text on Image</title>
-  <link href="{% static 'graffiti/style.css' %}" rel="stylesheet">
-  <script src="https://unpkg.com/fabric@5.3.0/dist/fabric.min.js"></script>
 </head>
 <body>
   <h1>hello</h1>
+
+  {% if user.is_authenticated %}
+      <p>You're logged in! <a href="{% url 'account_logout' %}">Log out</a></p>
+  {% else %}
+      <h2>Login or Signup</h2>
+
+      <a href="{% provider_login_url 'twitter' %}">Login with Twitter</a>
+  {% endif %}
   
 </body>
 </html>
