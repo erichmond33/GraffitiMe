@@ -8,7 +8,7 @@ import json
 from django.core.files.base import ContentFile
 import base64
 import tweepy
-from allauth.socialaccount.models import SocialApp, SocialAccount 
+from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
 from django.contrib.auth.decorators import login_required
 
 def index(request):
@@ -42,10 +42,15 @@ def profile_view(request):
     username = twitter_data.get('screen_name')
     name = twitter_data.get('name')
 
+    # Send a tweet with this user
+    access_token = social_account.socialtoken_set.get(account=social_account).token
+    access_token_secret = social_account.socialtoken_set.get(account=social_account).token_secret
+
     context = {
         'username': username, 
         'name': name,
-        # Add more Twitter data as needed
+        'access_token': access_token,
+        'access_token_secret': access_token_secret
     }
     return render(request, 'graffiti/profile.html', context)
     
