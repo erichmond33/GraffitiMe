@@ -87,7 +87,7 @@
       
       <div class="row">
         <div class="col">
-          <button id="saveButton">Update Eli's banner</button>
+          <button id="saveButton">Update {{ name }}'s banner</button>
           <small id="profileLink"><a href="https://twitter.com/eerichmond33" target="_blank">Check it out</a></small>
         </div>
       </div>
@@ -96,6 +96,7 @@
   
 
   
-  <script src="{% static 'graffiti/script.js' %}"></script>  
+  <script src="{% static 'graffiti/script.js' %}"></script>
+  <p id="username" username="{{ username }}" hidden></p>
 </body>
 </html>

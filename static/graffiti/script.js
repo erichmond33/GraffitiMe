@@ -224,7 +224,8 @@ function loadImageWithHardReload(url, callback) {
 }
   
   // Load the background image and scale it
-  loadImageWithHardReload(window.location.origin + '/static/graffiti/banner.jpg', function(img) {
+  const username = document.getElementById('username').getAttribute('username');
+  loadImageWithHardReload(window.location.origin + `/static/graffiti/banner_${username}.jpg`, function(img) {
       img.set({
           scaleX: canvas.width / img.width,
           scaleY: canvas.height / img.height,
@@ -249,7 +250,7 @@ function loadImageWithHardReload(url, callback) {
   });
   canvas.add(text);
 
-  wiggleText();
+  // wiggleText();
   function wiggleText() {
     var wiggle = 0;
     var wiggleInterval = setInterval(function() {
