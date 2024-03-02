@@ -249,24 +249,7 @@ function loadImageWithHardReload(url, callback) {
     selectable: true,
   });
   canvas.add(text);
-
-  // wiggleText();
-  function wiggleText() {
-    var wiggle = 0;
-    var wiggleInterval = setInterval(function() {
-      text.set('left', text.left + Math.sin(wiggle) * 5);
-      text.set('top', text.top + Math.cos(wiggle) * 5);
-      canvas.renderAll();
-      wiggle += 0.1;
-    }, 26);
-    setTimeout(function() {
-      clearInterval(wiggleInterval);
-      text.set('left', 50);
-      text.set('top', 30);
-      canvas.renderAll();
-    }, 3000);
-  }
-
+  canvas.setActiveObject(text);
 
   // Listener for text input changes
   document.getElementById('textInput').addEventListener('change', function(e) {
@@ -362,35 +345,50 @@ function loadImageWithHardReload(url, callback) {
     document.getElementById('canvasContainer').style.zoom = newZoom;
   });
 
-
   // Save button functionality
   document.getElementById('saveButton').addEventListener('click', function() {
-    // Scale image to 1500 by 500
-    scaleCanvasToSpecificSize();
-    const imageDataURL = canvas.toDataURL({ format: 'jpg' });
-    saveImage(imageDataURL);
-    // Scale screen back up/down
-    resizeAndScaleCanvas();
+    // Get the current text content
+    const currentText = text.text;
+
+    // Validation
+    if (currentText.trim() === '' || currentText === 'leave a note') {
+        alert('Don\'t leave the defualt text :)');
+    } else {
+        // Scale image to 1500 by 500
+        scaleCanvasToSpecificSize();
+        const imageDataURL = canvas.toDataURL({ format: 'jpg' });
+        saveImage(imageDataURL);
+        // Scale screen back up/down
+        resizeAndScaleCanvas();
+        resizeAndScaleCanvas();
+    }
   });
   
-  // Function to save image
-  function saveImage(imageDataURL) {
-    // fetch('http://127.0.0.1:8000/graffiti/save_image', {
-    fetch(window.location.origin + '/graffiti/save_image', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image_data: imageDataURL }),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to save image');
-        }
-        console.log('Image saved successfully');
-    })
-    .catch(error => {
-        console.error('Error saving image:', error);
-    });
-}
+    // Function to save image
+    function saveImage(imageDataURL, event) {
+
+        // Get the CSRF token from a hidden input field 
+        var csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+
+        fetch(window.location.origin + `/graffiti/save_image/${username}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ image_data: imageDataURL }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to save image');
+            }
+            console.log('Image saved successfully');
+            document.getElementById('goodMessage').textContent = 'Image saved successfully';
+            document.getElementById('profileLink').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error saving image:', error);
+            document.getElementById('errorMessage').textContent = '** Failed to save image **';
+        });
+    }
 });

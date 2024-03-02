@@ -12,15 +12,27 @@ from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
 from django.contrib.auth.decorators import login_required
 import requests
 from PIL import Image
+from django.contrib.auth.models import User
 
 
-def index(request):
+
+def graffiti(request, username):
     if request.method == "GET":
-        social_account = SocialAccount.objects.get(user=request.user, provider='twitter')
-        username = social_account.extra_data.get('screen_name')
+        # Get banner's user by username
+        user = User.objects.get(username=username)
+        # Get the banner's associated Twitter account
+        social_account = SocialAccount.objects.get(user=user, provider='twitter')
         name = social_account.extra_data.get('name')
+        print(user.username)
 
-        return render(request, "graffiti/index.html", {'username': username, 'name': name})
+        # Get the requester's username
+        if request.user.is_authenticated:
+            social_account = SocialAccount.objects.get(user=request.user, provider='twitter')
+            requester_username = social_account.extra_data.get('screen_name')
+        else:
+            requester_username = None
+
+        return render(request, "graffiti/index.html", {'username': username, 'name': name, 'requester_username': requester_username})
     
 def temp(request):
     if request.method == "GET":
@@ -75,7 +87,8 @@ def profile_view(request):
         # 'access_token': access_token,
         # 'access_token_secret': access_token_secret
     }
-    return render(request, 'graffiti/profile.html', context)
+    # return render(request, 'graffiti/profile.html', context)
+    return redirect('graffiti', username=username)
 
 @login_required
 def update(request):
@@ -115,13 +128,12 @@ def update(request):
 
     else:
         return JsonResponse({'status': 'fail', 'message': 'Use GET request'})
-    
-@csrf_exempt
-@login_required
-def save_image(request):
+
+
+def save_image(request, username):
     if request.method == "POST":
         if request.body:  # Check if the request body has content
-           try:
+            try:
                 data = json.loads(request.body)
                 # Process the data here
                 # Assuming you receive a JSON payload with an image_data field
@@ -143,7 +155,8 @@ def save_image(request):
                 images_dir_localhost = "graffiti/static/graffiti/"
 
                 # Get twitter username & keys
-                social_account = SocialAccount.objects.get(user=request.user, provider='twitter')
+                user = User.objects.get(username=username)
+                social_account = SocialAccount.objects.get(user=user, provider='twitter')
                 username = social_account.extra_data.get('screen_name')
                 access_token = social_account.socialtoken_set.get(account=social_account).token
                 access_token_secret = social_account.socialtoken_set.get(account=social_account).token_secret
@@ -174,9 +187,11 @@ def save_image(request):
 
                 return JsonResponse({'status': 'success', 'message': 'Image saved successfully'})
 
-           except json.decoder.JSONDecodeError:
+            except json.decoder.JSONDecodeError:
+               
                return HttpResponseBadRequest("Invalid JSON data")
         else:
+           
            return HttpResponseBadRequest("Missing JSON data")
             
     else:
