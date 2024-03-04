@@ -3,10 +3,9 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
+    path("", views.index, name="index"),
     path("u/<str:username>", views.graffiti, name="graffiti"),
-    path("temp", views.temp, name="temp"),
-    path('save_image/<str:username>', views.save_image, name="save_image"),
-    path("update/", views.update, name="update"),
-    path('accounts/profile/', views.profile_view, name='profile'),
+    path('accounts/profile/', views.saveTwitterBanner, name='saveTwitterBanner'),
     path('accounts/', include('allauth.urls')),
+    path('save_image/<str:username>', views.save_image, name="save_image"),
 ]

@@ -156,6 +156,7 @@ if (window.location.hostname !== '127.0.0.1') {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
   var canvas = new fabric.Canvas('canvas');
 
   // Function to resize and scale the canvas and its contents
