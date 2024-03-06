@@ -15,15 +15,9 @@
 <body>
 
   <div id="mySidebar" class="sidebar">
-    {% if user.is_authenticated and user.username == username %}
       <a href="{% url 'saveTwitterBanner' %}?refresh_banner=True">Upload a new banner</a>
-    {% endif %}
-    {% if user.is_authenticated and user.username != username %}
-      <a href="{% url 'graffiti' requester_username %}">Go to your banner</a>
-    {% endif %}
-    {% if user.is_authenticated %}
+      <a href="#" onclick="copyPageLink()">Share your page link</a> <script>function copyPageLink() {var copyText = window.location.href;navigator.clipboard.writeText(copyText);alert("Copied the link: " + copyText);} </script>
       <a href="{% url 'account_logout' %}">Log out</a>
-    {% endif %}
   </div>
 
   <div class="" id="canvasContainer">
@@ -32,9 +26,13 @@
   </div>
   <div class="row">
     <div class="col">
-      {% if user.is_authenticated %}
+      {% if user.is_authenticated and user.username == username %}
         <button class="open-btn button" onclick="openNav()"><img src="{% static 'graffiti/burger.svg' %}" alt="menu" width="20px" height="20px"></button>
-      {% else %}
+      {% endif %}
+      {% if user.is_authenticated and user.username != username %}
+      <small id="helpMessage"><a href="{% url 'graffiti' requester_username %}">Go to your banner</a></small>
+        {% endif %}
+        {% if not user.is_authenticated %}
         <small id="helpMessage"><a href="{% provider_login_url 'twitter' %}">Add notes to <i>YOUR</i> Twitter profile</a></small>
       {% endif %}    
     </div>
@@ -115,7 +113,7 @@
           <small id="goodMessage"></small>
           <small id="errorMessage"></small>
           <small id="profileLink" hidden><a href="https://twitter.com/{{ username }}" target="_blank">Check it out</a></small>
-          <button id="saveButton" class="button">Update {{ name }}'s banner</button>
+          <button id="saveButton" class="button fullLengthButton">Update {{ name }}'s banner</button>
         </div>
       </div>
     </div>

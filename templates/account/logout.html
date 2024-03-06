@@ -1,0 +1,38 @@
+{% extends "account/base_manage.html" %}
+{% load static %}
+{% load allauth i18n %}
+{% block head_title %}
+    {% trans "Sign Out" %}
+{% endblock head_title %}
+{% block extra_head %}
+<link href="{% static 'graffiti/style.css' %}" rel="stylesheet">
+<link href="{% static 'graffiti/bootstrap-grid.css' %}" rel="stylesheet">
+{% endblock extra_head %}
+{% block content %}
+    {% url 'account_logout' as action_url %}
+    <div class="container" id="form-container">
+        <div class="row">
+            <div id="form">
+                <div class="col">
+                    <h2 class="feature">Logout</h2>
+                    {% element form method="post" action=action_url no_visible_fields=True %}
+                        {% slot body %}
+                            {% csrf_token %}
+                            {% if redirect_field_value %}
+                                <input type="hidden"
+                                    name="{{ redirect_field_name }}"
+                                    value="{{ redirect_field_value }}" />
+                            {% endif %}
+                        {% endslot %}
+                        {% slot actions %}
+                        {% element button type="submit" class="button fullLengthButton stepTwo" id="loginLogoutButton" %}
+                        {% trans 'Continue' %}
+                            {% endelement %}
+                        {% endslot %}
+                    {% endelement %}
+                    <div class="col my-2"><a href="/">Go back</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

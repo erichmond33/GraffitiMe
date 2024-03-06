@@ -24,7 +24,9 @@ def index(request):
             username = social_account.extra_data.get('screen_name')
             return redirect('graffiti', username=username)
         else:
-            return render(request, "graffiti/index.html")
+            # <a href="{% provider_login_url 'twitter' %}">Login with Twitter</a>
+            provider_login_url = lambda provider: f"/accounts/{provider}/login/"
+            return redirect(provider_login_url('twitter'))
 
 def graffiti(request, username):
     if request.method == "GET":
@@ -50,53 +52,44 @@ def saveTwitterBanner(request):
     twitter_data = social_account.extra_data  # Access Twitter data
     username = twitter_data.get('screen_name')
 
-    # Check if they follow me
-    # Get my app's keys
-    load_dotenv('./graffiti/keys.env')
-    consumer_key = os.getenv('CONSUMER_KEY')
-    consumer_secret = os.getenv('CONSUMER_SECRET')
+    # See if their banner image is already stored in /static/graffiti/banner_username
+    if not os.path.exists(f'./static/graffiti/banner_{username}.jpg'):
+        # Download their current banner image
+        banner_image_url = twitter_data.get('profile_banner_url')  # Get banner URL
+        if banner_image_url:
+            response = requests.get(banner_image_url, stream=True)
 
-    # Authenticate with the Twitter API
-    auth = tweepy.OAuth1UserHandler(
-        consumer_key, consumer_secret,
-        social_account.socialtoken_set.get(account=social_account).token,
-        social_account.socialtoken_set.get(account=social_account).token_secret
-    )
-    api = tweepy.API(auth)
+            if response.status_code == 200:
+                with open(f'./static/graffiti/banner_{username}.jpg', 'wb') as f:
+                    for chunk in response.iter_content(1024):
+                        f.write(chunk)
 
-    # Check if the user follows me
-    follows_me = api.lookup_friendships(screen_names=[username])[0].followed_by
-    print(f'Follows me: {follows_me}')
+                # Copy this image to /graffiti/static/graffiti
+                os.system(f'cp ./static/graffiti/banner_{username}.jpg ./graffiti/static/graffiti/banner_{username}.jpg')
+            else:
+                # Handle error downloading banner image
+                print('Error downloading banner image')
+        else:
+            print('User does not have a banner image')
 
-    # # See if their banner image is already stored in /static/graffiti/banner_username
-    # if not os.path.exists(f'./static/graffiti/banner_{username}.jpg'):
-    #     # Download their current banner image
-    #     banner_image_url = twitter_data.get('profile_banner_url')  # Get banner URL
-    #     if banner_image_url:
-    #         response = requests.get(banner_image_url, stream=True)
+    # If it this process fails for any reason, make an all white image
+    if not os.path.exists(f'./static/graffiti/banner_{username}.jpg'):
+        banner_width = 1500  # Adjust as needed
+        banner_height = 500  # Adjust as needed
+        img = Image.new('RGB', (banner_width, banner_height), color='white')
+        img.save(f'./static/graffiti/banner_{username}.jpg')
+        os.system(f'cp ./static/graffiti/banner_{username}.jpg ./graffiti/static/graffiti/banner_{username}.jpg')
 
-    #         if response.status_code == 200:
-    #             with open(f'./static/graffiti/banner_{username}.jpg', 'wb') as f:
-    #                 for chunk in response.iter_content(1024):
-    #                     f.write(chunk)
+    return redirect('share')
 
-    #             # Copy this image to /graffiti/static/graffiti
-    #             os.system(f'cp ./static/graffiti/banner_{username}.jpg ./graffiti/static/graffiti/banner_{username}.jpg')
-    #         else:
-    #             # Handle error downloading banner image
-    #             print('Error downloading banner image')
-    #     else:
-    #         print('User does not have a banner image')
+@login_required
+def share(request):
+    # Get associated Twitter account
+    social_account = SocialAccount.objects.get(user=request.user, provider='twitter')
+    twitter_data = social_account.extra_data
+    username = twitter_data.get('screen_name')
 
-    # # If it this process fails for any reason, make an all white image
-    # if not os.path.exists(f'./static/graffiti/banner_{username}.jpg'):
-    #     banner_width = 1500  # Adjust as needed
-    #     banner_height = 500  # Adjust as needed
-    #     img = Image.new('RGB', (banner_width, banner_height), color='white')
-    #     img.save(f'./static/graffiti/banner_{username}.jpg')
-    #     os.system(f'cp ./static/graffiti/banner_{username}.jpg ./graffiti/static/graffiti/banner_{username}.jpg')
-
-    return redirect('graffiti', username=username)
+    return render(request, "graffiti/share.html", {'username': username})
 
 
 def save_image(request, username):
