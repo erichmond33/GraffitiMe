@@ -226,10 +226,12 @@ function loadImageWithHardReload(url, callback) {
   
   // Load the background image and scale it
   const username = document.getElementById('username').getAttribute('username');
+  const opacity = .50;
   loadImageWithHardReload(window.location.origin + `/static/graffiti/banner_${username}.jpg`, function(img) {
       img.set({
           scaleX: canvas.width / img.width,
           scaleY: canvas.height / img.height,
+          opacity: opacity
       });
       canvas.setBackgroundImage(img, function() {
           canvas.renderAll();
@@ -357,11 +359,15 @@ function loadImageWithHardReload(url, callback) {
     } else {
         // Scale image to 1500 by 500
         scaleCanvasToSpecificSize();
+        // Make the image 0% opaque (fully visible)
+        canvas.backgroundImage.set('opacity', 1);
         const imageDataURL = canvas.toDataURL({ format: 'jpg' });
         saveImage(imageDataURL);
         // Scale screen back up/down
         resizeAndScaleCanvas();
         resizeAndScaleCanvas();
+        // Set the opacity again
+        canvas.backgroundImage.set('opacity', opacity);
     }
   });
   
@@ -386,6 +392,26 @@ function loadImageWithHardReload(url, callback) {
             console.log('Image saved successfully');
             document.getElementById('goodMessage').textContent = 'Image saved successfully';
             document.getElementById('profileLink').style.display = 'block';
+            // Reload the image
+            loadImageWithHardReload(window.location.origin + `/static/graffiti/banner_${username}.jpg`, function(img) {
+                img.set({
+                    scaleX: canvas.width / img.width,
+                    scaleY: canvas.height / img.height,
+                    opacity: opacity
+                });
+                canvas.setBackgroundImage(img, function() {
+                    canvas.renderAll();
+                    resizeAndScaleCanvas();
+                }, {
+                    originX: 'left',
+                    originY: 'top',
+                });
+            });
+            // Reset the text content and location
+            text.set('text', 'leave another?');
+            text.set('left', 50);
+            text.set('top', 50);
+            canvas.renderAll();
         })
         .catch(error => {
             console.error('Error saving image:', error);

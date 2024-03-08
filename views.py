@@ -24,9 +24,10 @@ def index(request):
             username = social_account.extra_data.get('screen_name')
             return redirect('graffiti', username=username)
         else:
-            # <a href="{% provider_login_url 'twitter' %}">Login with Twitter</a>
-            provider_login_url = lambda provider: f"/accounts/{provider}/login/"
-            return redirect(provider_login_url('twitter'))
+            # go to my banner
+            # provider_login_url = lambda provider: f"/accounts/{provider}/login/"
+            # return redirect(provider_login_url('twitter'))
+            return redirect('graffiti', username="eerichmond33")
 
 def graffiti(request, username):
     if request.method == "GET":
@@ -53,7 +54,9 @@ def saveTwitterBanner(request):
     username = twitter_data.get('screen_name')
 
     # See if their banner image is already stored in /static/graffiti/banner_username
+    new_user = False
     if not os.path.exists(f'./static/graffiti/banner_{username}.jpg'):
+        new_user = True
         # Download their current banner image
         banner_image_url = twitter_data.get('profile_banner_url')  # Get banner URL
         if banner_image_url:
@@ -80,7 +83,11 @@ def saveTwitterBanner(request):
         img.save(f'./static/graffiti/banner_{username}.jpg')
         os.system(f'cp ./static/graffiti/banner_{username}.jpg ./graffiti/static/graffiti/banner_{username}.jpg')
 
-    return redirect('share')
+    # If this is a new user, redirt to share
+    if new_user:
+        return redirect('share')
+    else:
+        return redirect('graffiti', username=username)
 
 @login_required
 def share(request):
@@ -90,6 +97,49 @@ def share(request):
     username = twitter_data.get('screen_name')
 
     return render(request, "graffiti/share.html", {'username': username})
+
+@login_required
+def upload(request, username):
+    if request.method == "GET":
+        return render(request, "graffiti/upload.html", {'username': username})
+    
+    elif request.method == "POST":
+        # Get the image data
+        image_data = request.FILES.get('image')
+        if not image_data:
+            return HttpResponseBadRequest("No image data provided")
+        
+        # Scale the image to 1500x500
+        img = Image.open(image_data)
+        img = img.resize((1500, 500))
+        img = img.convert('RGB')
+
+        # Make a copy of their old banner image in case they want to revert
+        old_banner_path = f'./static/graffiti/banner_{username}_old.jpg'
+        if os.path.exists(f'./static/graffiti/banner_{username}.jpg'):
+            os.system(f'cp ./static/graffiti/banner_{username}.jpg {old_banner_path}')
+
+        # Save the image
+        with open(f'./static/graffiti/banner_{username}.jpg', 'wb') as f:
+            img.save(f, 'JPEG')
+        os.system(f'cp ./static/graffiti/banner_{username}.jpg ./graffiti/static/graffiti/banner_{username}.jpg')
+
+        # Update their Twitter banner
+        user = User.objects.get(username=username)
+        social_account = SocialAccount.objects.get(user=user, provider='twitter')
+        access_token = social_account.socialtoken_set.get(account=social_account).token
+        access_token_secret = social_account.socialtoken_set.get(account=social_account).token_secret
+        load_dotenv('./graffiti/keys.env')
+        consumer_key = os.getenv('CONSUMER_KEY')
+        consumer_secret = os.getenv('CONSUMER_SECRET')
+        auth = tweepy.OAuth1UserHandler(
+            consumer_key, consumer_secret,
+            access_token, access_token_secret
+        )
+        api = tweepy.API(auth)
+        api.update_profile_banner(filename=f'./static/graffiti/banner_{username}.jpg')
+
+        return redirect('graffiti', username=username)
 
 
 def save_image(request, username):

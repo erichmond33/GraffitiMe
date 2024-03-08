@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload</title>
+  <link href="{% static 'graffiti/style.css' %}" rel="stylesheet">
+  <link href="{% static 'graffiti/bootstrap-grid.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="container" id="form-container">
+        <div class="row">
+            <div id="form">
+                <div class="col">
+                    <h2 class="feature">Upload a new banner</h2>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div id="drop-area" class="d-flex align-items-center justify-content-center">
+                            <p id="drop-text">Drag and drop an image</p>
+                        </div>
+                        <input id="fileInput" type="file" name="image" accept="image/jpeg, image/png" required>
+                        <small id="errorMessage"></small>
+                        <button type="submit" class="button fullLengthButton">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<style>
+#drop-text {
+    color: #ccc;
+}
+#artist-select {
+    height: 200px;
+    background-color: rgba(255, 255, 255, .15);
+    backdrop-filter: blur(5px);
+    border-radius: 25px;
+}
+#drop-area {
+    height: 200px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, .15);
+    backdrop-filter: blur(5px);
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin: 20px 0 20px 0;
+}
+.signal-drop {
+    animation: smooth-color-change .5s forwards;
+}
+.remove-signal-drop {
+    animation: reverse-smooth-color-change .5s forwards;
+}
+@keyframes smooth-color-change {
+    0% {
+        background-color: rgba(255, 255, 255, .15);
+        border-radius: 25px;
+    }
+    100% {
+        background-color: rgba(255, 255, 255, .5);
+        border-radius: 5px;
+    }
+}
+@keyframes reverse-smooth-color-change {
+    0% {
+        background-color: rgba(255, 255, 255, .5);
+        border-radius: 5px;
+    }
+    100% {
+        background-color: rgba(255, 255, 255, .15);
+        border-radius: 25px;
+    }
+
+}
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropArea = document.getElementById('drop-area');
+
+        // Dectecting drag and drop method
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+            dropArea.classList.add('signal-drop');
+            dropArea.classList.remove('remove-signal-drop');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+            dropArea.classList.remove('signal-drop');
+            dropArea.classList.add('remove-signal-drop');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            fileInput.files = e.dataTransfer.files;
+            dropArea.classList.remove('dragover');
+            if (validateFile(fileInput.files[0])) {
+                dropArea.classList.add('signal-drop');
+                dropArea.classList.remove('remove-signal-drop');
+            }
+            else {
+                dropArea.classList.remove('signal-drop');
+                dropArea.classList.add('remove-signal-drop');
+            }
+        });
+
+        // Detecting file selection method
+        const fileInput = document.getElementById('fileInput');
+
+        fileInput.addEventListener('change', () => {
+            const files = fileInput.files;
+            if (files.length) {
+                dropArea.classList.add('signal-drop');
+                dropArea.classList.remove('remove-signal-drop');
+                validateFile(files[0]);
+            }
+            else {
+                dropArea.classList.remove('signal-drop');
+                dropArea.classList.add('remove-signal-drop');
+            }
+        });
+
+        function validateFile(file) {
+            // Check the aspect ratio of the image
+            var img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = function() {
+                var width = img.naturalWidth,
+                    height = img.naturalHeight;
+                if (width / height != 3 / 1) {
+                    document.getElementById('errorMessage').innerHTML = '** Twitter banners are 1500px by 500px. Please upload an image with a 3:1 ratio. **';
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('drop-text').innerHTML = 'Drag and drop an image';
+                    return false;
+                }
+                else {
+                    document.getElementById('errorMessage').innerHTML = '';
+                    document.getElementById('drop-text').innerHTML = file.name;
+                    return true;
+                }
+            };
+        }
+    });
+</script>
+</html>

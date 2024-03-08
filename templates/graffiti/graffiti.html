@@ -15,7 +15,7 @@
 <body>
 
   <div id="mySidebar" class="sidebar">
-      <a href="{% url 'saveTwitterBanner' %}?refresh_banner=True">Upload a new banner</a>
+      <a href="{% url 'upload' username %}">Upload a new banner</a>
       <a href="#" onclick="copyPageLink()">Share your page link</a> <script>function copyPageLink() {var copyText = window.location.href;navigator.clipboard.writeText(copyText);alert("Copied the link: " + copyText);} </script>
       <a href="{% url 'account_logout' %}">Log out</a>
   </div>
@@ -59,7 +59,7 @@
           <label for="text">Text</label>
         </div>
         <div class="col-9">
-          <input type="text" id="textInput" value="" required placeholder="leave a note">
+          <textarea id="textInput" required placeholder="leave a note"></textarea>
         </div>
         <div class="col">
           <small id="hint">P.S. Drag the text :)</small>
