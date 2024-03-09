@@ -39,9 +39,19 @@
   </div>
 
   <div class="container" id="form-container">
-    <div id="form">
+    <div class="formWidth"> 
+      <div class="row">
+        <div class="col d-flex justify-content-end align-items-center">
+          <small id="opacityLabel">Full-color</small>
+          <label>
+            <input type="checkbox" id="opacityToggle" class="checkbox">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="formWidth" id="form">
     {% csrf_token %}
-    
       <div class="row feature" id="zoom">
         <div class="col-6 d-flex align-items-center">
           <label for="text">Zoom in/out</label>
@@ -117,6 +127,8 @@
         </div>
       </div>
     </div>
+
+    <p id="footer">Created by <a href="https://twitter.com/eerichmond33" target="_blank">Eli Richmond</a></p>
   </div>
   
 

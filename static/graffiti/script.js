@@ -1,153 +1,3 @@
-// document.addEventListener('DOMContentLoaded', function() {
-//     const canvas = document.getElementById('canvas');
-//     const ctx = canvas.getContext('2d');
-//     var font_size = "40px"
-//     var text_color = "#000000"
-//     var rotationAngle = 0;
-//     const text = { content: "Really Cool Text", x: 50, y: 50, font: `${font_size} aAttackGraffiti` };
-  
-//     // Off-screen canvas
-//     const offscreenCanvas = document.createElement('canvas');
-//     const offscreenCtx = offscreenCanvas.getContext('2d');
-//     offscreenCanvas.width = canvas.width;
-//     offscreenCanvas.height = canvas.height;
-  
-//     function draw() {
-//       // Clear off-screen canvas
-//       offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
-    
-//       const img = new Image();
-//       img.src = window.location.origin + '/static/graffiti/banner.jpg';
-//       img.onload = async function() {
-//         // Wait on the font to load
-//         await document.fonts.load(text.font);
-    
-//         // Draw image on off-screen canvas
-//         offscreenCtx.drawImage(img, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
-    
-//         // Set up text properties
-//         offscreenCtx.font = text.font;
-//         offscreenCtx.fillStyle = text_color;
-    
-//         // Translate and rotate for text drawing
-//         offscreenCtx.save(); // Save current state
-//         offscreenCtx.translate(text.x, text.y); // Move to the text's intended x,y position
-//         offscreenCtx.rotate(rotationAngle * Math.PI / 180); // Apply rotation
-    
-//         // Draw the text at (0, 0) since we've translated the context
-//         offscreenCtx.fillText(text.content, 0, 0);
-    
-//         offscreenCtx.restore(); // Restore to the original state before translation and rotation
-    
-//         // Copy off-screen canvas to visible canvas
-//         ctx.clearRect(0, 0, canvas.width, canvas.height);
-//         ctx.drawImage(offscreenCanvas, 0, 0);
-//       };
-//     }
-    
-  
-//     function getMousePos(canvas, evt) {
-//       const rect = canvas.getBoundingClientRect();
-//       return {
-//         x: evt.clientX - rect.left,
-//         y: evt.clientY - rect.top
-//       };
-//     }
-  
-//     let isDragging = false;
-//     let offsetX, offsetY;
-  
-//     canvas.addEventListener('mousedown', function(evt) {
-//       const mousePos = getMousePos(canvas, evt);
-//       const textWidth = offscreenCtx.measureText(text.content).width;
-//       const textHeight = parseInt(text.font, 10); // Rough approximation based on font size
-//       if (mousePos.x >= text.x && mousePos.x <= text.x + textWidth && mousePos.y >= text.y - textHeight && mousePos.y <= text.y) {
-//         isDragging = true;
-//         offsetX = mousePos.x - text.x;
-//         offsetY = mousePos.y - text.y;
-//       }
-//     });
-  
-    
-  
-//     canvas.addEventListener('mousemove', function(evt) {
-//       if (isDragging) {
-//         const mousePos = getMousePos(canvas, evt);
-//         text.x = mousePos.x - offsetX;
-//         text.y = mousePos.y - offsetY;
-//         draw();
-//       }
-//     });
-  
-//     canvas.addEventListener('mouseup', function() {
-//       isDragging = false;
-//     });
-  
-//     draw();
-
-
-
-
-//     // Text manipulation 
-
-//     // Add event listener for font selector changes
-//     document.getElementById('fontSelector').addEventListener('change', function(e) {
-//         const selectedFont = e.target.value;
-//         text.font = `${font_size} ${selectedFont}`;
-//         draw();
-//     });
-
-//     // Add an event listener for font size slider
-//     document.getElementById('fontSize').addEventListener('input', function(e) {
-//         font_size = e.target.value + "px";
-//         text.font = `${font_size} ${document.getElementById('fontSelector').value}`;
-//         for(let i = 0; i < 20; i++) {
-//             draw();
-//         }
-//     });
-
-//     // Add event listener for font color picker
-//     document.getElementById('fontColor').addEventListener('input', function(e) {
-//       text_color = e.target.value;
-//       draw();
-//     });
-
-//     // Add event listener for a rotation slider/input
-//     document.getElementById('rotationSlider').addEventListener('input', function(e) {
-//       rotationAngle = e.target.value;
-//       draw();
-//     });
-
-
-
-
-//     // Save button
-//     document.getElementById('saveButton').addEventListener('click', function() {
-//         const imageDataURL = canvas.toDataURL('image/jpg');
-//         saveImage(imageDataURL);
-//       });
-    
-//       function saveImage(imageDataURL) {
-//         fetch('http://127.0.0.1:8000/graffiti/save_image', {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//           },
-//           body: JSON.stringify({ image_data: imageDataURL }),
-//         })
-//         .then(response => {
-//           if (!response.ok) {
-//             throw new Error('Failed to save image');
-//           }
-//           console.log('Image saved successfully');
-//           // Optionally handle success response
-//         })
-//         .catch(error => {
-//           console.error('Error saving image:', error);
-//           // Optionally handle error
-//         });
-//       }
-//   });
 // If the page isn't 127.0.0.1, redirect to https://
 if (window.location.hostname !== '127.0.0.1') {
   if (window.location.protocol === 'http:') {
@@ -226,7 +76,7 @@ function loadImageWithHardReload(url, callback) {
   
   // Load the background image and scale it
   const username = document.getElementById('username').getAttribute('username');
-  const opacity = .50;
+  const opacity = .25;
   loadImageWithHardReload(window.location.origin + `/static/graffiti/banner_${username}.jpg`, function(img) {
       img.set({
           scaleX: canvas.width / img.width,
@@ -348,6 +198,17 @@ function loadImageWithHardReload(url, callback) {
     document.getElementById('canvasContainer').style.zoom = newZoom;
   });
 
+  // Toggle Opacity
+  function toggleOpacity() {
+    const checkboxInput = document.getElementById('opacityToggle');
+    const isChecked = checkboxInput.checked;
+    if (canvas.backgroundImage) {
+      canvas.backgroundImage.set('opacity', isChecked ? 1 : opacity);
+      canvas.renderAll();
+    }
+  }
+  document.getElementById('opacityToggle').addEventListener('click', toggleOpacity);
+
   // Save button functionality
   document.getElementById('saveButton').addEventListener('click', function() {
     // Get the current text content
@@ -366,8 +227,8 @@ function loadImageWithHardReload(url, callback) {
         // Scale screen back up/down
         resizeAndScaleCanvas();
         resizeAndScaleCanvas();
-        // Set the opacity again
-        canvas.backgroundImage.set('opacity', opacity);
+        // Check the #opacityToggle and set the opacity to whatever it is on
+        toggleOpacity();
     }
   });
   
@@ -412,6 +273,8 @@ function loadImageWithHardReload(url, callback) {
             text.set('left', 50);
             text.set('top', 50);
             canvas.renderAll();
+            // Uncheck opacityToggle
+            document.getElementById('opacityToggle').checked = false;
         })
         .catch(error => {
             console.error('Error saving image:', error);
