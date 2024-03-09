@@ -28,6 +28,11 @@ def index(request):
             # provider_login_url = lambda provider: f"/accounts/{provider}/login/"
             # return redirect(provider_login_url('twitter'))
             return redirect('graffiti', username="eerichmond33")
+        
+def login(request):
+    if request.method == "GET":
+        provider_login_url = lambda provider: f"/accounts/{provider}/login/"
+        return redirect(provider_login_url('twitter'))
 
 def graffiti(request, username):
     if request.method == "GET":
