@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path('login', views.login, name="login"),
+    path('demo', views.demo, name="demo"),
     path("u/<str:username>", views.graffiti, name="graffiti"),
     path('accounts/profile/', views.saveTwitterBanner, name='saveTwitterBanner'),
     path("upload/<str:username>", views.upload, name="upload"),

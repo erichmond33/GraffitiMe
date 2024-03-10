@@ -31,8 +31,11 @@ def index(request):
         
 def login(request):
     if request.method == "GET":
-        provider_login_url = lambda provider: f"/accounts/{provider}/login/"
-        return redirect(provider_login_url('twitter'))
+        return redirect("/graffiti/accounts/twitter/login/")
+    
+def demo(request):
+    if request.method == "GET":
+        return render(request, "graffiti/graffiti.html", {'username': "AvantGardesv1", 'name': "Demo", "demo": True})
 
 def graffiti(request, username):
     if request.method == "GET":

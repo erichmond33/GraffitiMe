@@ -20,6 +20,21 @@
       <a href="{% url 'account_logout' %}">Log out</a>
   </div>
 
+  {% if demo %}
+    <div class="container">
+      <div class="row">
+        <div class="col my-3">
+          <h1>Welcome to the Graffiti Banner demo!</h1>
+          <p class="my-3">Write something, style it, drag it, and click the update button.</p>
+          <p class="my-3">Then view it on Twitter <span style="font-size: 1.25em;">🤯😆</span></p>
+          <p class="my-3"><a href="https://twitter.com/{{ username }}" target="_blank">twitter.com/{{ username }}</a></p>
+          <p class="my-4">Please be nice :)</p>
+        </div>
+      </div>
+    </div>
+    <hr class="mb-5">
+  {% endif %}
+
   <div class="" id="canvasContainer">
     <canvas id="canvas" width="1500" height="500">
     </canvas>
@@ -31,9 +46,12 @@
       {% endif %}
       {% if user.is_authenticated and user.username != username %}
       <small id="helpMessage"><a href="{% url 'graffiti' requester_username %}">Go to your banner</a></small>
-        {% endif %}
-        {% if not user.is_authenticated %}
+      {% endif %}
+      {% if not user.is_authenticated and demo != True %}
         <small id="helpMessage"><a href="{% provider_login_url 'twitter' %}">Add notes to <i>YOUR</i> Twitter profile</a></small>
+      {% endif %}    
+      {% if demo %}
+        <small id="helpMessage"><a href="https://twitter.com/eerichmond33" target="_blank">What do you think? DM me.</a></small>
       {% endif %}    
     </div>
   </div>
