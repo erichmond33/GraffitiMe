@@ -54,6 +54,9 @@ def graffiti(request, username):
 
         return render(request, "graffiti/graffiti.html", {'username': username, 'name': name, 'requester_username': requester_username})
     
+    elif request.method == "HEAD":
+        return HttpResponse(status=200)
+    
 @login_required
 def saveTwitterBanner(request):
     # Get associated Twitter account

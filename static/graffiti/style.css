@@ -8,7 +8,7 @@
 }
 @font-face {
   font-family: "docallismeonstreet";
-  src: url("docallismeonstreet.otf");
+  src: url("docallismeonstreet.ttf");
 }
 @font-face {
   font-family: "punkkid";
@@ -156,9 +156,10 @@ a:visited {
 
 #textInput {
   margin-bottom: 2.5px;
-  /* Prevent resizing only in the y direction */
   resize: vertical;
   padding: 10px 10px 10px 10px;
+  height: 40px;
+  width: 100%;
 }
 
 #hint {
@@ -277,6 +278,7 @@ input[type="color"] {
 select {
   padding: 10px;
   height: 40px;
+  width: 100%;
 }
 
 input {
